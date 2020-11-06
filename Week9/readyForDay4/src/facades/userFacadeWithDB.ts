@@ -37,8 +37,11 @@ export default class UserFacade {
   }
 
   static async deleteUser(userName: string): Promise<string> {
-    throw new Error("Not Implemented")
+    const result = await userCollection.deleteMany({userName: userName})
+    const msg = `${result.deletedCount} users has been removed`;
+    return msg;
   }
+  
   //static async getAllUsers(): Promise<Array<IGameUser>> {
   static async getAllUsers(proj?: object): Promise<Array<any>> {
     const users = await userCollection.find({}, { projection: proj }).toArray()
@@ -55,12 +58,12 @@ export default class UserFacade {
 
   static async checkUser(userName: string, password: string): Promise<boolean> {
     let userPassword = "";
-    console.log("Checking")
     let user;
 
     user = await UserFacade.getUser(userName);
-
-    console.log("Found ", user)
+    if(!user) {
+      return false
+    }
     userPassword = user.password;
     const status = await bryptCheckAsync(password, userPassword);
     return status

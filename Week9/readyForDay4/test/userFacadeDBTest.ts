@@ -39,7 +39,6 @@ describe("Verify the UserFacade with a DataBase", () => {
     ])
   })
 
-
   it("Should Add the user Kurt", async () => {
     const newUser = { name: "Jan Olsen", userName: "jo@b.dk", password: "secret", role: "user" }
     try {
@@ -55,38 +54,44 @@ describe("Verify the UserFacade with a DataBase", () => {
     } finally { }
   })
 
-  xit("Should remove the user Peter", async () => {
-
+  it("Should remove the user Peter", async () => {
+    const userName = 'pp@b.dk'
+    const status = await UserFacade.deleteUser(userName)
+    expect(status).to.be.equal('1 users has been removed')
   })
 
-  xit("Should get three users", async () => {
-
+  it("Should get three users", async () => {
+    const result = await UserFacade.getAllUsers()
+    expect(result.length).to.be.equal(3)
   })
 
-  xit("Should find Donald Duck", async () => {
+  it("Should find Donald Duck", async () => {
+    const userName = 'dd@b.dk'
+    const result = await UserFacade.getUser(userName)
+    expect(result.name).to.be.equal('Donald Duck')
+    expect(result.userName).to.be.equal(userName)
+  })
 
+  it("Should not find xxx.@.b.dk", async () => {
+      const result = await UserFacade.getUser("xxx.@.b.dk");
+      expect(result).to.be.equal(null)
   })
-  xit("Should not find xxx.@.b.dk", async () => {
-    try {
-      const donald = await UserFacade.getUser("xxx.@.b.dk");
-      throw new Error("Should not get here")
-    } catch (err) {
-      expect(err instanceof ApiError).to.be.equal(true)
-      expect(err.message).to.be.equal("User not found")
-    }
-    finally { }
-  })
-  xit("Should correctly validate Peter Pan's credential,s", async () => {
 
+  it("Should correctly validate Peter Pan's credentials", async () => {
+    const userName = 'pp@b.dk'
+    const result = await UserFacade.checkUser(userName, 'secret')
+    expect(result).to.be.true
   })
-  xit("Should NOT correctly validate Peter Pan's check", async () => {
+
+  it("Should NOT correctly validate Peter Pan's check", async () => {
     try {
       const passwordStatus = await UserFacade.checkUser("pp@b.dk", "xxxx");
     } catch (err) {
       expect(err).to.be.false
     }
   })
-  xit("Should NOT correctly validate non-existing users check", async () => {
+
+  it("Should NOT correctly validate non-existing users check", async () => {
     try {
       const passwordStatus = await UserFacade.checkUser("pxxxx@b.dk", "secret");
     } catch (err) {

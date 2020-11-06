@@ -101,11 +101,22 @@ describe("Create/Update Comments", function () {
   });
 
   it("Should not find the user xxx@b.dk", async () => {
-    let falseUsername = "xxx@b.dk";
-    let path = `${URL}/api/users/${falseUsername}`;
-    let result = await fetch(path).then((response) => response.json());
+    const falseUsername = "xxx@b.dk";
+    const path = `${URL}/api/users/${falseUsername}`;
+    const result = await fetch(path).then((response) => response.json());
     expect(result.msg).to.equal("User Not Found");
   });
 
-  xit("Should Remove the user Donald Duck", async () => {});
+  it("Should Remove the user Donald Duck", async () => {
+    const path = `${URL}/api/users/dd@b.dk`;
+    const config = {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      }
+    };
+    let result = await fetch(path, config).then((response) => response.json());
+    expect(result.status).to.equal("1 users has been removed");
+  });
 });
